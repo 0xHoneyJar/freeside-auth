@@ -1,0 +1,11 @@
+{
+  "name": "@freeside-identities/adapters",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Typed clients implementing ports — Postgres adapter against Railway midi_profiles, JWKS validator (cache + stale-if-error), credential bridges (Dynamic / Better Auth / SeedVault → canonical proof). Wire-side, not pure logic.",
+  "license": "MIT",
+  "dependencies": {
+    "@freeside-identities/protocol": "workspace:*",
+    "@freeside-identities/ports": "workspace:*"
+  }
+}

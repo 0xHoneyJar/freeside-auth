@@ -1,0 +1,23 @@
+{
+  "name": "freeside-identities",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Keeper of identity schemas — User entity, Wallet entity, Identity Component, JWT claims, multi-credential proofs (SIWE, passkey, Dynamic, SeedVault). IIdentityService port + MCP tool specs + headless engine. The freeside-* attachment module that worlds + ruggy + dashboards consume to resolve wallets to canonical user_ids + handles.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0xHoneyJar/freeside-identities.git"
+  },
+  "workspaces": [
+    "packages/protocol",
+    "packages/ports",
+    "packages/adapters",
+    "packages/mcp-tools",
+    "packages/engine",
+    "packages/ui"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.0"
+  }
+}
