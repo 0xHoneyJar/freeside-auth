@@ -1,10 +1,10 @@
 {
-  "name": "@freeside-identities/ports",
+  "name": "@freeside-auth/ports",
   "version": "0.1.0",
   "private": true,
   "description": "TS interface ports — IIdentityService (resolve, register, link), IJwksProvider (verify, fetch JWKS), ICredentialBridge (translate external proof → canonical CredentialProof). Consumers depend on these; adapters satisfy them.",
   "license": "MIT",
   "dependencies": {
-    "@freeside-identities/protocol": "workspace:*"
+    "@freeside-auth/protocol": "workspace:*"
   }
 }

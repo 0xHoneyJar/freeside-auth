@@ -1,8 +1,8 @@
-# INTENT — why freeside-identities exists
+# INTENT — why freeside-auth exists
 
 > The auth-unification audit (2026-04-16, `bonfire/grimoires/bonfire/context/auth-unification-seed/02-current-state-audit.md`) named the problem: "Freeside JWKS infrastructure exists in loa-freeside/apps/gateway but is not consumed by any world. ZERO worlds issue Freeside tenant JWTs. Each world authenticates users independently." This module ends that.
 
-## What freeside-identities is
+## What freeside-auth is
 
 A sealed module providing:
 1. **Schemas** for the canonical user model (User Entity + IdentityComponent + JWT claims + credential proof shapes)
@@ -11,7 +11,7 @@ A sealed module providing:
 4. **A headless engine** with the 4-tier resolve algorithm, credential-link logic, and JWT verifier — pure functions
 5. (Future) **Admin UI** for freeside-dashboard's identity tab
 
-## What freeside-identities is NOT
+## What freeside-auth is NOT
 
 - ❌ A credential provider — not replacing Dynamic / Better Auth / SeedVault. Composes with them.
 - ❌ The JWKS issuance runtime — that stays at `loa-freeside/apps/gateway` (Rust). This module is the verify side + claims schema.
@@ -44,7 +44,7 @@ A sealed module providing:
 ## Success criteria
 
 This module succeeds when:
-1. ruggy's in-bot `freeside_auth` proxy is deleted, replaced by `import { createIdentitiesMcpServer } from '@freeside-identities/mcp-tools'`.
+1. ruggy's in-bot `freeside_auth` proxy is deleted, replaced by `import { createIdentitiesMcpServer } from '@freeside-auth/mcp-tools'`.
 2. The first non-ruggy consumer (Dixie or Sprawl Dashboard or a future bot) installs the package and gets identity resolution without re-deriving the algorithm.
 3. The JWKS server in loa-freeside/apps/gateway is consumed by AT LEAST ONE world via this module's `adapters/jwks-validator.ts`.
 4. A Solana credential lands without architectural rewrites — just a new bridge adapter.

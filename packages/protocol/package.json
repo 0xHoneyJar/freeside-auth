@@ -1,5 +1,5 @@
 {
-  "name": "@freeside-identities/protocol",
+  "name": "@freeside-auth/protocol",
   "version": "0.1.0",
   "private": true,
   "description": "Sealed wire-format schemas for identity overlay — User entity, Wallet entity, IdentityComponent, JWT claims, multi-credential proofs (SIWE / passkey / Dynamic / SeedVault). Consumers depend on these contracts; impls (loa-freeside/gateway issuer, midi onboarding writer, ruggy + future bot resolvers) satisfy them.",

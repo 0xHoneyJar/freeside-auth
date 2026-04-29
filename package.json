@@ -1,12 +1,12 @@
 {
-  "name": "freeside-identities",
+  "name": "freeside-auth",
   "version": "0.1.0",
   "private": true,
-  "description": "Keeper of identity schemas — User entity, Wallet entity, Identity Component, JWT claims, multi-credential proofs (SIWE, passkey, Dynamic, SeedVault). IIdentityService port + MCP tool specs + headless engine. The freeside-* attachment module that worlds + ruggy + dashboards consume to resolve wallets to canonical user_ids + handles.",
+  "description": "Auth module for the THJ ecosystem \u2014 wallet \u2192 canonical user, multi-credential linking (SIWE / passkey / Discord-bot / Telegram-bot / Dynamic-legacy), JWT claims via Freeside JWKS. Sealed schemas + agent surface (MCP) + headless engine. Apps port into this; this module does not drive any one app UX. DRAFT under major revision per codex 2026-04-29; see freeside-auth-requirements-seed-2026-04-29.md.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/0xHoneyJar/freeside-identities.git"
+    "url": "https://github.com/0xHoneyJar/freeside-auth.git"
   },
   "workspaces": [
     "packages/protocol",

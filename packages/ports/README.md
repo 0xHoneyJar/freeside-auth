@@ -33,8 +33,8 @@ Port shapes drafted from the in-bot impl in `freeside-ruggy/apps/bot/src/agent/f
 
 ## Consumers
 
-- `freeside-identities/packages/adapters/*` — every adapter satisfies one or more ports
-- `freeside-identities/packages/mcp-tools/*` — MCP tool specs wrap `IIdentityService`
-- `freeside-identities/packages/engine/*` — pure logic functions consume ports for I/O
+- `freeside-auth/packages/adapters/*` — every adapter satisfies one or more ports
+- `freeside-auth/packages/mcp-tools/*` — MCP tool specs wrap `IIdentityService`
+- `freeside-auth/packages/engine/*` — pure logic functions consume ports for I/O
 - `freeside-ruggy/apps/bot/src/agent/orchestrator.ts` — depends on the MCP surface, transitively on ports
 - Future per-world identity adapters — implement `IIdentityService` against world-specific stores

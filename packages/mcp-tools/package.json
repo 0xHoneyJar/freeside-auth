@@ -1,11 +1,11 @@
 {
-  "name": "@freeside-identities/mcp-tools",
+  "name": "@freeside-auth/mcp-tools",
   "version": "0.1.0",
   "private": true,
   "description": "MCP tool specs for agent-callable identity resolution — resolve_wallet, resolve_wallets, verify_token. Used by ruggy + future persona-bots to humanize wallets in prose without re-deriving the lookup.",
   "license": "MIT",
   "dependencies": {
-    "@freeside-identities/protocol": "workspace:*",
-    "@freeside-identities/ports": "workspace:*"
+    "@freeside-auth/protocol": "workspace:*",
+    "@freeside-auth/ports": "workspace:*"
   }
 }

@@ -1,11 +1,11 @@
 {
-  "name": "@freeside-identities/engine",
+  "name": "@freeside-auth/engine",
   "version": "0.1.0",
   "private": true,
   "description": "Headless identity logic — 4-tier resolve algorithm, credential-link semantics, JWT helpers (verify side, not issuer), supersession-aware identity merge. Pure functions, no I/O. Adapters wrap; engine reasons.",
   "license": "MIT",
   "dependencies": {
-    "@freeside-identities/protocol": "workspace:*",
-    "@freeside-identities/ports": "workspace:*"
+    "@freeside-auth/protocol": "workspace:*",
+    "@freeside-auth/ports": "workspace:*"
   }
 }

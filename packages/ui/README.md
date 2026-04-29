@@ -1,6 +1,6 @@
 # packages/ui — shared admin React components
 
-Future — for embedding in freeside-dashboard's identity tab. V0.1 of `freeside-identities` ships protocol + ports + adapters + mcp-tools + engine. UI lands once a downstream consumer (freeside-dashboard) needs admin views.
+Future — for embedding in freeside-dashboard's identity tab. V0.1 of `freeside-auth` ships protocol + ports + adapters + mcp-tools + engine. UI lands once a downstream consumer (freeside-dashboard) needs admin views.
 
 ## Planned components
 

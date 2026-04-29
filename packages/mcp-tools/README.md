@@ -23,7 +23,7 @@ Today's working impl is the in-bot freeside_auth MCP at `freeside-ruggy/apps/bot
 
 ```ts
 // freeside-ruggy switches from in-bot impl to package consumer:
-import { createIdentitiesMcpServer } from '@freeside-identities/mcp-tools';
+import { createIdentitiesMcpServer } from '@freeside-auth/mcp-tools';
 
 const server = createIdentitiesMcpServer({
   identityService: pgMidiProfilesAdapter(env.RAILWAY_MIBERA_DATABASE_URL),

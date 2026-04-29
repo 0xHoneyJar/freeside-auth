@@ -7,7 +7,7 @@
 
 ✅ Repo created. Six packages stubbed. Docs (INTENT, EXTRACTION-MAP, this file) authored. No code yet — intent + provenance only.
 
-**Acceptance**: `gh repo view 0xHoneyJar/freeside-identities` returns the stubbed module. README links to all three docs. Doctrine pages cross-link bidirectionally.
+**Acceptance**: `gh repo view 0xHoneyJar/freeside-auth` returns the stubbed module. README links to all three docs. Doctrine pages cross-link bidirectionally.
 
 ## Phase 1 — protocol (~3 days)
 
@@ -61,7 +61,7 @@ Tasks:
 4. Live-fire ruggy posts. Verify identity resolution still works end-to-end.
 5. Tag `0.1.0` release.
 
-**Acceptance**: ruggy live in production with `@freeside-identities/mcp-tools` as the source. No regression.
+**Acceptance**: ruggy live in production with `@freeside-auth/mcp-tools` as the source. No regression.
 
 ## Phase 5 — second consumer (~5 days)
 

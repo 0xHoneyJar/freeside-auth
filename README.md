@@ -1,6 +1,25 @@
-# freeside-identities
+# freeside-auth
 
-> The freeside-* installable module for **identity overlay** — wallet → canonical user_id, multi-credential linking (SIWE / passkey / Dynamic / SeedVault), JWT issuance via JWKS, handle + discord + mibera_id lookup. Sealed schemas + typed ports + agent surface + headless engine + (future) admin UI.
+> ⚠ **DRAFT — under major revision per codex 2026-04-29.** See
+> `bonfire/grimoires/bonfire/context/freeside-auth-requirements-seed-2026-04-29.md`
+> for canonical requirements heading into `/plan-and-analyze`. Six structural issues flagged
+> (rename done; threat model + Discord/TG verifier flow + issuer sequencing + package
+> cardinality + vendor-coupling + Dynamic-as-legacy still pending).
+
+> The freeside-* installable module for **auth** across the THJ
+> ecosystem — wallet → canonical user, multi-credential linking
+> (SIWE / passkey / Discord-bot / Telegram-bot / Dynamic-legacy),
+> JWT claims via Freeside JWKS. Sealed schemas + agent surface (MCP)
+> + headless engine. Apps port into this; this module doesn't drive
+> any one app's UX.
+
+Renamed from `freeside-identities` 2026-04-29 per operator + codex
+adversarial review. "Identity" was confusing in the agentic age (LLM
+agents have identities too); `auth` is the operator-canonical name and
+matches the box already named `FREESIDE-AUTH` in
+[`score-vs-identity-boundary`](https://github.com/0xHoneyJar/loa-hivemind/blob/main/wiki/concepts/score-vs-identity-boundary.md).
+The internal domain model retains `IdentityComponent`; only the
+module + repo name changed.
 
 This repo is the schemas + clients + engine side of the **identity spine** doctrine. The JWKS server runtime lives in [`loa-freeside/apps/gateway`](https://github.com/0xHoneyJar/loa-freeside/tree/main/apps/gateway) (Rust). Profile data of record lives in midi (Railway Postgres `midi_profiles`). This module bridges them with a sealed protocol surface.
 
@@ -17,7 +36,7 @@ This module ends that. Schemas + clients + MCP for wallet→identity resolution.
 ## The six packages
 
 ```
-freeside-identities/
+freeside-auth/
 ├── packages/
 │   ├── protocol/    📐 sealed schemas — User, Wallet, IdentityComponent, JWT claims, credential proofs
 │   ├── ports/       🔌 IIdentityService + IJwksProvider TS interfaces
@@ -28,7 +47,7 @@ freeside-identities/
 └── docs/
     ├── INTENT.md            why this module exists, what it extracts, what stays
     ├── EXTRACTION-MAP.md    per-file source paths in midi + freeside-ruggy + loa-freeside
-    └── INTEGRATION-PATH.md  staged cutover plan (in-bot mcp today → freeside-identities consumers)
+    └── INTEGRATION-PATH.md  staged cutover plan (in-bot mcp today → freeside-auth consumers)
 ```
 
 | package | role | analogous to |
@@ -42,7 +61,7 @@ freeside-identities/
 
 ## What lives here vs what stays elsewhere
 
-| concern | here (`freeside-identities`) | stays elsewhere |
+| concern | here (`freeside-auth`) | stays elsewhere |
 |---|---|---|
 | User / Wallet / IdentityComponent JSON schemas + Zod | ✅ `packages/protocol/` | — |
 | JWT claims schema (sub, wallets[], handle, tenant, tier, exp) | ✅ `packages/protocol/jwt-claims.schema.json` | — |
@@ -56,7 +75,7 @@ freeside-identities/
 | **Credential providers (Dynamic SDK, Better Auth, SeedVault)** | — | ✅ external libs. This module composes with them via adapters. |
 | **Per-world login UX** | — | ✅ each world owns its login flow |
 
-## Why `freeside-identities` (plural slug)
+## Why `freeside-auth` (plural slug)
 
 Per [[loa-org-naming-conventions]] + [[freeside-modules-as-installables]]: plural slugs mark "registry of multiple subjects" (matches `freeside-worlds`, `freeside-quests`). A single canonical user has MANY linked credentials (SIWE wallet + passkey device + Dynamic OAuth + future SeedVault), MANY wallets across chains, MANY tenant memberships. Plural feels right at the module level.
 
@@ -69,7 +88,7 @@ Per [[loa-org-naming-conventions]] + [[freeside-modules-as-installables]]: plura
 | `freeside-filesystem` | file storage layout + metadata serving |
 | `freeside-quests` | quest defs + completion + badges + raffles |
 | `freeside-ruggy` | persona-layer Discord bot (consumes mcp-tools from here for wallet → handle) |
-| **`freeside-identities`** (this) | identity overlay — wallet → user_id + handles + JWT |
+| **`freeside-auth`** (this) | identity overlay — wallet → user_id + handles + JWT |
 
 ## Status: scaffolded; extraction staged
 
@@ -84,7 +103,7 @@ This repo's job: extract the schemas + algorithms + adapters into a sealed modul
 
 - `freeside-ruggy` consumes `mcp-tools/resolve_wallet` + `mcp-tools/resolve_wallets` (replaces in-bot `freeside_auth` proxy when ready)
 - `loa-freeside/apps/gateway` (Rust) is the JWKS issuance runtime; this module's Zod claims schemas mirror its issued JWT shape
-- `0xHoneyJar/freeside-worlds` worlds opt in via `compose_with: freeside-identities` in `world-manifest.yaml`
+- `0xHoneyJar/freeside-worlds` worlds opt in via `compose_with: freeside-auth` in `world-manifest.yaml`
 - `0xHoneyJar/freeside-score` consumers JOIN `User` entities here with `Wallet` factor data there — never embed
 - Future `freeside-dashboard` Identity tab uses `packages/ui/` for admin views
 

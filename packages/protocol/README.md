@@ -1,6 +1,6 @@
 # packages/protocol — sealed identity schemas
 
-Wire-format contracts for the identity overlay. Bridges every `freeside-identities` consumer (worlds, ruggy, future persona-bots, dashboards, the loa-freeside gateway) to a single coherent vocabulary.
+Wire-format contracts for the identity overlay. Bridges every `freeside-auth` consumer (worlds, ruggy, future persona-bots, dashboards, the loa-freeside gateway) to a single coherent vocabulary.
 
 ## Status: scaffolded; content extraction pending
 
@@ -29,10 +29,10 @@ Same as `freeside-worlds/packages/protocol/VERSIONING.md` — imported verbatim 
 
 ## Consumers (post-extraction)
 
-- `freeside-identities/packages/ports/` — type ports off these schemas
-- `freeside-identities/packages/adapters/pg-midi-profiles.ts` — validates over wire from Railway PG
-- `freeside-identities/packages/adapters/jwks-validator.ts` — validates JWT claims against this schema
-- `freeside-identities/packages/mcp-tools/` — agent-callable surface
+- `freeside-auth/packages/ports/` — type ports off these schemas
+- `freeside-auth/packages/adapters/pg-midi-profiles.ts` — validates over wire from Railway PG
+- `freeside-auth/packages/adapters/jwks-validator.ts` — validates JWT claims against this schema
+- `freeside-auth/packages/mcp-tools/` — agent-callable surface
 - `freeside-ruggy/apps/bot/src/agent/freeside_auth/` — current in-bot proxy; replaces with `mcp-tools/` consumer
 - `loa-freeside/apps/gateway/` (Rust) — issuance side mirrors these claims (cross-language schema sync via JSON Schema, not Zod)
 - Any future world's auth flow — verifies tokens against `jwt-claims.schema.json`

@@ -1,10 +1,10 @@
 {
-  "name": "@freeside-identities/ui",
+  "name": "@freeside-auth/ui",
   "version": "0.1.0",
   "private": true,
   "description": "Shared admin React components for identity surfaces — link-wallet flow, view-credentials list, identity-debug panel, handle-edit form. For embedding in freeside-dashboard's identity tab. UI is FUTURE — V0.1 is engine + adapters + MCP first.",
   "license": "MIT",
   "dependencies": {
-    "@freeside-identities/protocol": "workspace:*"
+    "@freeside-auth/protocol": "workspace:*"
   }
 }

@@ -1,4 +1,4 @@
-# freeside-identities — agent instructions
+# freeside-auth — agent instructions
 
 This is a freeside-* installable module: **identity overlay** (wallet → canonical user_id + handles + JWT claims). Six packages: `protocol/` (sealed schemas), `ports/` (TS interfaces), `adapters/` (Postgres + JWKS validator + credential bridges), `mcp-tools/` (agent surface), `engine/` (4-tier resolve + credential-link + JWT helpers), `ui/` (shared admin React components — future).
 
@@ -10,7 +10,7 @@ Load this CLAUDE.md when:
 - Operator extracts identity code from midi (`lib/server/resolve-wallet.ts`) → `engine/`
 - Operator extracts identity code from freeside-ruggy (`apps/bot/src/agent/freeside_auth/`) → `adapters/` + `mcp-tools/`
 - Operator extracts JWKS validator from loa-freeside (`packages/adapters/agent/s2s-jwt-validator.ts`) → `adapters/jwks-validator.ts`
-- Operator authors a new world that wants identity (declares `compose_with: freeside-identities` in world-manifest.yaml)
+- Operator authors a new world that wants identity (declares `compose_with: freeside-auth` in world-manifest.yaml)
 - Operator extends the protocol with new credential proof shapes (e.g. SeedVault when Solana support lands)
 
 ## Hard rules
@@ -20,7 +20,7 @@ Load this CLAUDE.md when:
 - **Score data is OFF LIMITS.** Per [[score-vs-identity-boundary]] (2026-04-29 doctrine): factors, ranks, scoring belong to score-mibera. This module joins via `User.wallets[]` with score's `Wallet` entity but never embeds factor data into Identity. Cross-coupling them is the antipattern.
 - **Credential providers are external.** Dynamic SDK, Better Auth, SeedVault are libraries we COMPOSE with, not absorb. Adapter pattern: `packages/adapters/credential-bridge-{dynamic,better-auth,seedvault}.ts` translates external proof → canonical CredentialProof schema.
 - **Schema governance imported from loa-constructs.** Enum-locked `schema_version`, additive-only minor bumps, major bumps require migration plan + new file + stable `$id` (per `packages/protocol/VERSIONING.md`).
-- **Naming follows attachment-prefix doctrine.** `freeside-identities` is plural — mirrors `freeside-worlds`, `freeside-quests` (registry of multiple subjects). Per [[loa-org-naming-conventions]].
+- **Naming follows attachment-prefix doctrine.** `freeside-auth` is plural — mirrors `freeside-worlds`, `freeside-quests` (registry of multiple subjects). Per [[loa-org-naming-conventions]].
 
 ## Composition
 
