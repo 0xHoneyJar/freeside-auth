@@ -106,6 +106,34 @@ Post-SDD substrate audit completed. The Sprawl Dashboard repo and auth dir are L
 
 Coordinate gate item #5 closes GREEN. Three items remain (janitooor, soju, Better Auth POC).
 
+### 0.6 Coordinate Amendment 2 (2026-05-01) — GWK research synthesis + positioning sharpened
+
+Operator-directed reference dig on Dynamic Global Wallet Kit (https://www.dynamic.xyz/blog/dynamic-global-wallet-kit) completed 2026-05-01. Findings synthesized at `grimoires/research-dynamic-gwk-2026-05-01.md` (durable artifact, citation-grounded).
+
+**Three positioning insights:**
+
+1. **GWK has NO public JWT/OIDC story.** GWK's "cross-app" primitive is "your wallet appears in their wallet picker" via RainbowKit/ConnectKit/WalletConnect. That's wallet-UX, not session portability. The JWT/JWKS spine is the layer GWK NEVER BUILT. **freeside-auth fills exactly this gap.**
+
+2. **Dynamic acquired by Fireblocks ~$90M (Oct 2025).** Roadmap optimized for fintech/enterprise custody-to-consumer. Indie builder roadmap deprioritized. Validates "no Dynamic in net-new" anti-scope but **softens the framing**: Dynamic credential UI stays a legitimate per-world option (FR-2.6 refined); we refuse Dynamic as the spine, not as a credential adapter.
+
+3. **DX/UX is the explicit differentiator.** Operator framing 2026-05-01: "make it very, very seamless." NFR-4.4 added: external builder scaffolds own brand on freeside-auth in <60 min. Standard JWKS/OIDC surface (NFR-1.6); no consumer-side SDK adoption forced (ANTI-24).
+
+**Triggered amendments**:
+- PRD FR-2.6 refined (Dynamic = per-world adapter, not "legacy-migration only")
+- PRD NFR-1.6 NEW (external surface = standard JWKS/OIDC)
+- PRD NFR-4.4 NEW (DX bar: <60min external scaffold)
+- PRD ANTI-23 NEW (don't conflate wallet-discovery with cross-app session)
+- PRD ANTI-24 NEW (no consumer-side SDK adoption forced)
+- PRD ANTI-25 NEW (don't try to out-build Dynamic's multi-chain wallet UI)
+- SDD §1.4 NEW ("What freeside-auth is NOT" — GWK boundary)
+- SDD §4.5 refined (Dynamic as per-world adapter, not just legacy)
+
+**Coordinate gate state unchanged**: still YELLOW (3 items: janitooor RSK-9-deferred, soju Railway, Better Auth POC). The amendments do not change Mirror-readiness; they sharpen positioning.
+
+**Distillation hook candidate D-N**: "credential-adapter-as-substrate-not-as-spine" — pattern observed when integrating with hosted wallet providers (Dynamic, Privy, Reown). Cycle retro promotion candidate.
+
+**Process note**: dig-search.ts (Gemini-backed) returned 403 PERMISSION_DENIED on all fallback models 2026-05-01; fell back to Agent WebSearch + WebFetch per CLAUDE.md fallback protocol. Failure logged in seed §15 + memory.
+
 ---
 
 ## §1 · Architecture overview
@@ -203,7 +231,25 @@ auth:
     enabled: false  # opt-in; default false (use Freeside issuer)
 ```
 
-### 1.4 Package cardinality (per DEC-AUTO-8 — collapse 6 → 3)
+### 1.4 What freeside-auth is NOT (GWK boundary, refined 2026-05-01)
+
+Per research synthesis at `grimoires/research-dynamic-gwk-2026-05-01.md`:
+
+> **freeside-auth is not a Dynamic Global Wallet Kit competitor at the credential layer — it's the identity/session layer GWK never built. The wallet-UX layer can remain Dynamic (or Reown AppKit, or Privy) on a per-world basis; freeside-auth owns the JWT/canonical-user spine that GWK leaves to "the wallet itself."**
+
+The boundary, explicit:
+
+| layer | who owns it | freeside-auth role |
+|---|---|---|
+| **wallet-UX** (multi-chain widget, 500+ wallets, brand picker) | Dynamic / Reown AppKit / Privy / per-world choice | **does NOT replicate** (ANTI-25) |
+| **credential proof** (SIWE sig, passkey assertion, Dynamic JWT) | external libs | **bridges via adapter pattern** (FR-2.1..2.6) |
+| **identity** (canonical user_id + credentials[] graph) | freeside-auth | **owns** (FR-1) |
+| **session** (Freeside JWT for cross-world use) | freeside-auth → loa-freeside Rust gateway issues; freeside-auth ships validator | **owns spine; gateway issues** (FR-3) |
+| **TEE custody, txn simulation, MFA** | Dynamic / hardware vendors | **does NOT replicate** (V1; revisit Sprint-3+ if substrate need surfaces) |
+
+GWK conflates layers 1-4 into "the wallet"; freeside-auth keeps them separated. That separation is the architecture differentiator and the basis for NFR-1.6 (external builder surface = standard JWKS/OIDC, no SDK adoption required on consumer side).
+
+### 1.5 Package cardinality (per DEC-AUTO-8 — collapse 6 → 3)
 
 ```
 @freeside-auth/protocol     — sealed schemas (TypeBox JSON Schema), versioned
@@ -752,12 +798,17 @@ All adapters live in `@freeside-auth/runtime/adapters/`. **One file per concern.
 - Sprawl Dashboard is the first consumer (vertical slice).
 - **POC failure → fallback path:** see §11 DEC-OPEN-1 resolution + RSK-7 mitigation.
 
-### 4.5 `credential-bridge-dynamic.ts` (FR-2.6, legacy-migration only)
+### 4.5 `credential-bridge-dynamic.ts` (FR-2.6, per-world credential adapter)
 
-- Implements `ICredentialBridge` with `kind: 'dynamic-legacy'`.
-- **Read-only.** Does NOT call live Dynamic API. Reads from canonical user table only (post-CSV import).
-- ESLint rule `no-restricted-imports` blocks `@dynamic-labs/*` from net-new code; allowlist exception only for this one file.
-- Used during Sprint-2+ consumer-app cutovers when a Dynamic-authed user first hits a Freeside-aware surface — adapter looks up canonical user by `dynamic_user_id` claim from the still-issued Dynamic JWT, hands user_id to engine.
+**Framing refined 2026-05-01 per GWK research synthesis** (`grimoires/research-dynamic-gwk-2026-05-01.md` §F + §G.1). Dynamic is NOT just a legacy-migration shim. Dynamic is a **per-world credential option** — its multi-chain wallet UI (500+ wallets) is genuinely strong infrastructure freeside-auth doesn't try to replicate. We refuse Dynamic as the **spine** (no Dynamic-issued JWT in net-new request paths); we accept it as a **credential adapter** that worlds opt into per `world-manifest.yaml`.
+
+- Implements `ICredentialBridge` with `kind: 'dynamic'`.
+- **Read-only on the auth path.** Does NOT call live Dynamic API for issuance. Reads from canonical user table (post-CSV import) and from Dynamic JWT claims passed via request header.
+- ESLint rule `no-restricted-imports` blocks `@dynamic-labs/*` from default-import in net-new code; per-world manifests may explicitly opt in (`auth.adapters: [dynamic]` in `world-manifest.yaml`).
+- Used in two flows:
+  - **Migration flow (Sprint-2+ consumer cutover)**: Dynamic-authed user hits a Freeside-aware surface — adapter looks up canonical user by `dynamic_user_id` claim from the still-issued Dynamic JWT, hands user_id to engine, engine returns Freeside JWT.
+  - **Per-world choice flow (post-Sprint-2)**: a world declares `dynamic` in its credential adapter manifest; uses Dynamic for wallet UI; freeside-auth issues the canonical Freeside JWT off the Dynamic-verified credential proof. **Wallet UX stays on Dynamic; spine is Freeside.**
+- Treat as instance of D-N distillation pattern "credential-adapter-as-substrate-not-as-spine" → cycle retro candidate.
 
 ### 4.6 `jwks-validator.ts` (FR-3.5, direct extraction)
 

@@ -171,7 +171,7 @@ Rationale: V1 ships the spine (path C of C-then-B hybrid). Sovereign operator to
 | FR-2.3 | The system shall ship a Discord-bot attestation adapter where the bot signs an attestation event submitted to Freeside issuer; bot does NOT mint JWTs | seed §4.1 (ES framing); seed §14.4 secondary critique |
 | FR-2.4 | The system shall ship a Telegram-bot attestation adapter (parallel to Discord) | seed §4.1 |
 | FR-2.5 | The system shall ship a Better Auth bridge adapter for sovereign tools (operator surface) | path C lock; seed §6 D3 (POC required) |
-| FR-2.6 | The system shall ship a Dynamic legacy adapter marked `legacy-migration` (read-only; lint-blocks default-import in net-new code) | seed §14.4 (codex review issue 4); anti-scope `:35` |
+| FR-2.6 | The system shall ship a Dynamic credential adapter (read-only, post-migration). Dynamic is a **per-world credential option** — not privileged as default, but not banned either. Lint rule blocks `@dynamic-labs/*` as default-import in net-new code; per-world manifests may explicitly opt in. | seed §14.4 (codex review issue 4); anti-scope `:35`; **refined 2026-05-01 per GWK research §G.1 — Dynamic credential UI stays legitimate per-world; we refuse Dynamic as the SPINE, not as a credential adapter** |
 
 ### FR-3 — JWT issuance + verification
 
@@ -230,6 +230,7 @@ Rationale: V1 ships the spine (path C of C-then-B hybrid). Sovereign operator to
 | NFR-1.3 | Discord/TG bots shall NOT mint JWTs and shall NOT share signing keys; bots submit signed attestation events to gateway issuer; gateway returns JWT | seed §14.4 secondary; ES framing 2026-04-24 |
 | NFR-1.4 | The system shall pin a privacy posture (zero-knowledge, selective disclosure, cookieless, etc.) — **OPEN**, see DEC-OPEN-8 | seed §4.2 (ES + soju 2026-04-24); seed §6.11 |
 | NFR-1.5 | The canonical user table shall be append-only on credential link events; revocation is event-recorded, not row-mutated | derived from audit-trail convention |
+| NFR-1.6 | The external-builder surface shall be standard JWKS + OIDC-shaped flow. The system shall NOT require consumer-side SDK adoption to verify a Freeside-issued identity. Any server in any app shall be able to verify a Freeside JWT using only standard cryptographic primitives (JWKS fetch + ES256 verify). | **NEW 2026-05-01 per GWK research §G.2** — GWK's primary positioning weakness is forcing consumer-side wallet-connector SDK adoption; freeside-auth's differentiator is JWKS-as-portable-spine |
 
 ### NFR-2 — Performance
 
@@ -254,6 +255,7 @@ Rationale: V1 ships the spine (path C of C-then-B hybrid). Sovereign operator to
 | NFR-4.1 | The system shall audit-log: canonical user mint, credential link, credential revocation, JWT issuance | seed §14.2 (audit trail concern) |
 | NFR-4.2 | The system shall expose a CLI/MCP for operator triage: lookup user_id by wallet/email/Discord-id; view credentials[]; revoke session | operator surface convention |
 | NFR-4.3 | The system shall NOT silently rewrite `sovereign-stack.md:45-51` Dynamic line; supersedes via ADR-039 | anti-scope `:41` |
+| NFR-4.4 | DX/UX bar: an external builder shall be able to scaffold their own brand ("Sign in with [their world]") on freeside-auth substrate in **<60 minutes** to a working JWKS-verified session in their first consumer app. Cross-app integration shall NOT require re-signup; canonical user_id portable. | **NEW 2026-05-01 per GWK research §G.4 + operator framing** — operator stated 2026-05-01: "make it very, very seamless is the goal here" |
 
 ### NFR-5 — Schema governance
 
@@ -318,6 +320,9 @@ Rationale: V1 ships the spine (path C of C-then-B hybrid). Sovereign operator to
 | ANTI-20 | Collapse identity + profile (scaffold has this bug; per ADR-038, profile data NOT in shared canonical) | seed `:245` |
 | ANTI-21 | Assume all consumers are web-based (Discord-bot + Telegram-bot are first-class) | seed `:246` |
 | ANTI-22 | Over-design package cardinality (collapse 6→3: protocol + runtime + mcp-tools per codex review) | seed `:247`, §14.6 |
+| ANTI-23 | Conflate wallet-discovery with cross-app session — GWK treats "your wallet appears in their wallet picker" as the cross-app primitive. Wallet-picker UX is NOT session portability. The cross-app primitive must be a verifiable signed token (JWT via JWKS), not a wallet connection. | **NEW 2026-05-01 per GWK research §E.1 + §G.3** — primary architecture mistake observed in Dynamic Global Wallet Kit |
+| ANTI-24 | Force consumer-side SDK adoption to verify a Freeside identity — server in app B must be able to verify a Freeside-issued JWT for app A using only standard JWKS fetch + ES256 verify, no `@freeside-auth/*` import required on the verifier side | **NEW 2026-05-01 per GWK research §F + §G.2** — GWK's hosted lock-in by design; freeside-auth's portability is the differentiator |
+| ANTI-25 | Try to out-build Dynamic's multi-chain wallet UI (500+ wallets, EVM/Solana/Bitcoin/Sui) — that's GWK's genuine strength; freeside-auth treats Dynamic-as-credential-layer as legitimate per-world option, NOT as a build-from-scratch target | **NEW 2026-05-01 per GWK research §F (Where Dynamic is genuinely strong)** — honest framing per ANTI-3 (don't replicate Dynamic's wallet widget) refined for the substrate-tier |
 
 ### 7.4 Vertical slice plan (Sprint-1)
 
@@ -570,9 +575,9 @@ Credential cluster (22 cols):
 
 ## G-ID Index
 
-- 7 functional requirement groups (FR-1 through FR-7) · 32 individual FR-IDs
-- 5 non-functional requirement groups (NFR-1 through NFR-5) · 19 individual NFR-IDs
-- 22 anti-scope items (ANTI-1 through ANTI-22)
+- 7 functional requirement groups (FR-1 through FR-7) · 32 individual FR-IDs · FR-2.6 refined 2026-05-01 (per-world adapter, not legacy-only)
+- 5 non-functional requirement groups (NFR-1 through NFR-5) · 21 individual NFR-IDs · NFR-1.6 + NFR-4.4 added 2026-05-01 (GWK research)
+- 25 anti-scope items (ANTI-1 through ANTI-25) · ANTI-23/24/25 added 2026-05-01 (GWK research)
 - 10 risks (RSK-1 through RSK-10)
 - 8 dependencies (DEP-1 through DEP-8)
 

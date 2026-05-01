@@ -157,14 +157,15 @@ E2E validation: Task 5.E2E in Phase 5 covers all seven goals end-to-end with cit
 
 ### Technical tasks
 
-#### Task 0.1: File janitooor sign-off ask → **[G-3]** **[G-7]**
+#### Task 0.1: ~~File janitooor sign-off ask~~ → **DEFERRED via RSK-9 fallback (2026-05-01 operator decision)** → **[G-3]** **[G-7]**
 **Source**: PRD DEP-1; SDD §0.4; RSK-9 mitigation.
-- [ ] Author message citing `loa-freeside/packages/adapters/agent/jwt-service.ts:142-170` substrate
-- [ ] Document PRD FR-3.1 vs substrate full-list discrepancy (PRD subset; SDD §2.3 mirrors substrate; per DEC-SDD-1)
-- [ ] Request: ratify schema mirror; flag drift-risk if claims shape changes upstream
-- [ ] Channel: PR comment on tracking issue `0xHoneyJar/hub-interface#20` + Discord ping
-- [ ] Beads: `freeside-auth-sprint-0.5-task-0.1` priority=P0
-- [ ] **Risk mitigation (RSK-9)**: if @janitooor unavailable >5d, schema-mirror is mechanical — proceed with extraction; flag delta in Phase 1 PR description for ratification when available
+**Status (2026-05-01)**: RSK-9 fallback ACTIVE. Operator chose to proceed without blocking on @janitooor — schema mirror is mechanical (substrate-cited verbatim from `loa-freeside/packages/adapters/agent/jwt-service.ts:142-170`). Phase 1 schema work proceeds; delta flagged in PR for retroactive ratification when @janitooor available.
+
+- [x] ~~Author sign-off ask message~~ — superseded; proceeding via mechanical mirror
+- [ ] **Acting under RSK-9**: extract schemas verbatim from substrate; cite line numbers in code comments (D-3 distillation pattern)
+- [ ] **Phase 1 PR description requirement**: include section "Janitooor ratify (RSK-9 retroactive)" listing each claim field + substrate line; on PR review, ping @janitooor for sign-off; merge does not block
+- [ ] Open question for retroactive ratification (DEC-SDD-2 / OQ-5): who authenticates a world calling `POST /identity/resolve-and-issue`? Surfaced in PR for jani when available
+- [ ] Beads: `freeside-auth-sprint-0.5-task-0.1` priority=DEFERRED; updated 2026-05-01
 
 #### Task 0.2: File soju Railway access ask → **[G-1]**
 **Source**: PRD DEP-8; SDD §0.4.
