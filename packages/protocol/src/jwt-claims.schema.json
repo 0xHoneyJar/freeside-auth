@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loa.dev/schemas/freeside-auth/jwt-claims.schema.json",
+  "title": "JWTClaim",
+  "description": "ES256 JWT claims shape. Mirrors loa-freeside/apps/gateway issuance shape (see loa-freeside/packages/adapters/agent/jwt-service.ts:142-200). The Rust gateway is the canonical signer per CLAUDE.md royal decree; this schema is the cross-language contract that both gateway (Rust) and consumers (TS) honor. Per SDD §11.1 Lock-8: V1 ships single keypair operator-rotated; jti denylist is V2. Per SDD §11.4 + I6 invariant: every consumer MUST assert claims.tenant === expected_tenant before authorizing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sub", "tenant", "wallets", "iss", "aud", "exp", "iat", "jti", "v"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "sub": {
+      "type": "string",
+      "description": "Tenant-scoped canonical user_id (e.g., midi_profiles.id for mibera). Matches User.sub."
+    },
+    "tenant": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]+$",
+      "description": "Tenant slug (mibera·cubquest·apdao·...). I6 invariant: every consumer MUST assert claims.tenant === expected_tenant for the request context."
+    },
+    "wallets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["chain", "address"],
+        "properties": {
+          "chain": { "type": "string", "enum": ["ethereum", "berachain", "solana", "bitcoin"] },
+          "address": { "type": "string" }
+        }
+      },
+      "description": "User's bound wallets. Multi-chain (e.g., cubquest = EVM + Solana). Empty for anon-tier sessions."
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["public", "verified", "bearer", "initiate", "keeper"],
+      "description": "Access tier per loa-freeside gateway tier model. Slice-B uses public/verified primarily."
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Cached IdentityComponent.handle for chat-medium presentation. CMP-boundary safe (handle, NOT raw ID)."
+    },
+    "discord_id": {
+      "type": "string",
+      "description": "Cached Discord snowflake for bot session correlation."
+    },
+    "iss": {
+      "type": "string",
+      "description": "Issuer. loa-freeside/apps/gateway issues with `arrakis` in v1; freeside-auth-orchestrated mints set this per gateway config."
+    },
+    "aud": {
+      "type": "string",
+      "description": "Audience. Tenant-bound (e.g., `mibera`, `cubquest`) — not generic `loa-finn`. Slice-B uses tenant-bound audience for I6 enforcement."
+    },
+    "exp": {
+      "type": "integer",
+      "description": "Expiration (unix epoch). 1h TTL per Lock-8."
+    },
+    "iat": {
+      "type": "integer",
+      "description": "Issued-at (unix epoch)."
+    },
+    "jti": {
+      "type": "string",
+      "format": "uuid",
+      "description": "JWT ID (UUIDv4). Reserved for V2 jti denylist per SDD §11.5 D-H."
+    },
+    "v": {
+      "type": "integer",
+      "const": 1,
+      "description": "JWT schema version (per Bridgebuilder F-10 in loa-freeside)."
+    },
+    "nft_id": {
+      "type": "integer",
+      "description": "Bound NFT/Mibera token ID. Optional; legacy slot from gateway shape."
+    },
+    "pool_id": {
+      "type": "string",
+      "description": "Reserved · loa-freeside execution-context pool routing. Slice-B does not populate."
+    },
+    "byok": {
+      "type": "boolean",
+      "description": "Reserved · BYOK flag for finn ModelRunner. Slice-B does not populate."
+    },
+    "req_hash": {
+      "type": "string",
+      "description": "Reserved · request body hash for replay protection at finn. Slice-B does not populate."
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loa.dev/schemas/freeside-auth/identity-component.schema.json",
+  "title": "IdentityComponent",
+  "description": "ECS Component attached to User entity per [[ecs-architecture-freeside]]. Carries credentials, presentation handles, social links, and per-tenant identity data. Component composition: User Entity + IdentityComponent + per-Wallet FactorEvent Components (score-mibera domain).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["user_sub"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "user_sub": {
+      "type": "string",
+      "description": "Foreign key to User.sub. ECS-style component reference."
+    },
+    "credentials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "credential_id"],
+        "properties": {
+          "type": { "type": "string", "enum": ["siwe", "passkey", "dynamic", "seedvault", "legacy"] },
+          "credential_id": { "type": "string" },
+          "linked_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "description": "Bound credentials. Per credential type: siwe = wallet+sig·passkey = WebAuthn·dynamic = Dynamic SDK ID·seedvault = Solana SeedVault (V2)·legacy = pre-Dynamic onboarding."
+    },
+    "handle": {
+      "type": "string",
+      "description": "Display handle (e.g., '@soju'). User-chosen, presented in chat-medium per [[chat-medium-presentation-boundary]]."
+    },
+    "discord_id": {
+      "type": "string",
+      "description": "Discord user snowflake (string, 64-bit precision)."
+    },
+    "discord_username": {
+      "type": "string",
+      "description": "Discord display name (cached for fallback when bot can't fetch live)."
+    },
+    "mibera_id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000,
+      "description": "Bound Mibera/Grail token ID. References on-chain. Optional; not all users hold."
+    },
+    "pfp_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Profile picture URL. Per-character: assets.0xhoneyjar.xyz/Mibera/grails/{slug}.webp pattern for Grails."
+    },
+    "pfp_attribution": {
+      "type": "string",
+      "description": "Attribution for non-Grail PFPs (cubquest's avatar, mibera's chosen visual, etc)."
+    },
+    "bio": {
+      "type": "string",
+      "maxLength": 280,
+      "description": "User-authored short bio. Discord-medium budget."
+    }
+  }
+}
