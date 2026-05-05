@@ -16,3 +16,15 @@ export {
   type CredentialInput,
   type PingResult,
 } from './tenant-adapter.port';
+
+export {
+  type JWTSigner,
+  SignerError,
+} from './jwt-signer.port';
+
+export {
+  type JWTVerifier,
+  type VerifyResult,
+  type VerifyError,
+  type RevocationLayer,
+} from './jwt-verifier.port';

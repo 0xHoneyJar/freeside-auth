@@ -15,9 +15,10 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@freeside-auth/protocol": "workspace:*",
+    "@freeside-auth/engine": "workspace:*",
     "@freeside-auth/ports": "workspace:*",
-    "@freeside-auth/engine": "workspace:*"
+    "@freeside-auth/protocol": "workspace:*",
+    "jose": "^6.2.3"
   },
   "peerDependencies": {
     "pg": "^8.11.0"

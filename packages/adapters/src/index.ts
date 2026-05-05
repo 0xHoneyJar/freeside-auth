@@ -22,3 +22,15 @@ export {
   type PgPoolLike,
   type MidiProfileRow,
 } from './postgres-split-adapter';
+
+// JWKS validator (B-1.4 · per CLAUDE.md royal decree: VALIDATOR not signer)
+export {
+  JwksValidator,
+  type JwksValidatorConfig,
+} from './jwks-validator';
+
+// HTTP JWT signer (B-1.4 · §12.3 delegation default · points at loa-freeside/apps/gateway)
+export {
+  HttpJWTSigner,
+  type HttpJWTSignerConfig,
+} from './http-jwt-signer';

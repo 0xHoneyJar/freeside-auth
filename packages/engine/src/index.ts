@@ -41,3 +41,12 @@ export {
   type TenantChain,
   type TenantRegistryFile,
 } from './tenant-config';
+
+// Mint orchestrator (B-1.4)
+export {
+  MintJWTOrchestrator,
+  MintError,
+  type MintRequest,
+  type MintResult,
+  type MintOrchestratorConfig,
+} from './mint-jwt-orchestrator';
