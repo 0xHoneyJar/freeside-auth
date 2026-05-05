@@ -1,0 +1,125 @@
+# freeside-auth tenant registry — declarative entries
+#
+# Source: ~/Documents/GitHub/freeside-auth/grimoires/specs/tenant-adapter-foundation-2026-05-04.md
+# Post substrate-of-record audit (2026-05-04 · 8 Supabase projects extracted to
+# Railway Postgres · 100% parity).
+#
+# Validated against TenantConfigSchema at boot. Loaded by TenantRegistry.
+# Indexed by `id`. Returned via getAdapter(tenant_id).
+#
+# Slice-B (cycle-B convergence-spine) ships ACTIVE: mibera + cubquest.
+# Others are declarative stubs — adapters return `null` on resolveCredential
+# (config tenants) or throw (legacy archive).
+#
+# When operator activates a new tenant:
+# 1. Provision Railway Postgres (or confirm existing)
+# 2. Add entry below with verified railway_project_id
+# 3. Set TENANT_<ID>_DATABASE_URL in freeside-auth deployment env
+# 4. Implement adapter class in @freeside-auth/adapters/postgres-{shape}-adapter.ts
+# 5. Update tests + integration smoke
+
+tenants:
+  # ── ACTIVE in slice-B ──────────────────────────────────────────────────
+  - id: mibera
+    name: "Mibera (midi · honeyroad)"
+    substrate: postgres
+    shape: split
+    chains: [ethereum]
+    dynamic_user_id_present: true
+    connection:
+      env_var: TENANT_MIBERA_DATABASE_URL
+      railway_project_id: 44721dce-1ea0-42e7-8b56-bdd01f22e375
+    user_table:
+      name: midi_profiles
+      wallet_column: wallet_address
+      dynamic_user_id_column: dynamic_user_id
+    archive_only: false
+
+  - id: cubquest
+    name: "CubQuests (gamification)"
+    substrate: postgres
+    shape: unified
+    chains: [ethereum, solana]
+    dynamic_user_id_present: true
+    connection:
+      env_var: TENANT_CUBQUEST_DATABASE_URL
+      railway_project_id: 57a19fbc-e8d5-485c-bdb1-dc00b1842202
+    user_table:
+      name: profiles
+      wallet_column: address
+      sol_address_column: sol_address
+      dynamic_user_id_column: dynamic_user_id
+    archive_only: false
+
+  # ── DECLARATIVE-ONLY (config / governance / legacy) ────────────────────
+  - id: apdao
+    name: "apDAO (governance)"
+    substrate: postgres
+    shape: config
+    chains: []
+    dynamic_user_id_present: false
+    connection:
+      env_var: TENANT_APDAO_DATABASE_URL
+      railway_project_id: 78cefc68-f24f-45f0-82ca-5c83101be63b
+    archive_only: false  # governance data is live · just no user identity table
+
+  - id: honeyjar
+    name: "0xHoneyJar (org-wide telemetry)"
+    substrate: postgres
+    shape: config
+    chains: []
+    dynamic_user_id_present: false
+    connection:
+      env_var: TENANT_HONEYJAR_DATABASE_URL
+      railway_project_id: bd1641fb-2570-4df6-909b-ed4aa6d3cbed
+    archive_only: false
+
+  - id: interpol
+    name: "Interpol (DeFi kitchen / saving floor)"
+    substrate: postgres
+    shape: unified
+    chains: [ethereum]
+    dynamic_user_id_present: false
+    connection:
+      env_var: TENANT_INTERPOL_DATABASE_URL
+      railway_project_id: edff22a9-c2a0-4e65-8db5-318f401941a5
+    user_table:
+      name: sf_users
+      wallet_column: address  # TBD verify column name
+    archive_only: false
+
+  - id: validator
+    name: "Validator Rewards Automation (BGT)"
+    substrate: postgres
+    shape: config
+    chains: []
+    dynamic_user_id_present: false
+    connection:
+      env_var: TENANT_VALIDATOR_DATABASE_URL
+      railway_project_id: 8c6d0de7-2797-44cc-923c-4d4fe9fb44f2
+    archive_only: false
+
+  - id: henlo
+    name: "Henlo (gallery + tetris substrate)"
+    substrate: postgres
+    shape: unified
+    chains: [ethereum]
+    dynamic_user_id_present: false
+    connection:
+      env_var: TENANT_HENLO_DATABASE_URL
+      railway_project_id: f7b583cc-7f84-4c8a-945f-a087fa2c2d92
+    user_table:
+      name: henlo_profiles
+      wallet_column: wallet_address
+    archive_only: false
+
+  - id: henlo-old
+    name: "Henlo Legacy (crew_members + claim snapshots)"
+    substrate: postgres
+    shape: legacy
+    chains: [ethereum]
+    dynamic_user_id_present: false
+    connection:
+      env_var: TENANT_HENLO_OLD_DATABASE_URL
+      railway_project_id: 68ae3f8c-5a1c-421d-9aa8-da68ad267811
+    archive_only: true  # historical snapshot · no live read path
