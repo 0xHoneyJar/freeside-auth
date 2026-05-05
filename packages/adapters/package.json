@@ -2,10 +2,27 @@
   "name": "@freeside-auth/adapters",
   "version": "0.1.0",
   "private": true,
-  "description": "Typed clients implementing ports — Postgres adapter against Railway midi_profiles, JWKS validator (cache + stale-if-error), credential bridges (Dynamic / Better Auth / SeedVault → canonical proof). Wire-side, not pure logic.",
+  "description": "Typed clients implementing ports — PostgresSplitAdapter (mibera) · PostgresUnifiedAdapter (cubquest) · JWKS validator (cache + stale-if-error) · credential bridges (Dynamic / Better Auth / SeedVault → canonical proof). Wire-side, not pure logic.",
   "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./postgres-split": "./src/postgres-split-adapter.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
   "dependencies": {
     "@freeside-auth/protocol": "workspace:*",
-    "@freeside-auth/ports": "workspace:*"
+    "@freeside-auth/ports": "workspace:*",
+    "@freeside-auth/engine": "workspace:*"
+  },
+  "peerDependencies": {
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0"
   }
 }
