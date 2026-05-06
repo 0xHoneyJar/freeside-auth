@@ -31,11 +31,33 @@ export const TenantConnectionSchema = z.object({
   railway_project_id: z.string().optional(),
 }).strict();
 
+// Postgres identifier pattern · used by adapters that template-literal-
+// interpolate table/column names into SQL (postgres-split-adapter etc.).
+// Cross-reviewer flatline + bridgebuilder (PR #1 · HIGH) flagged the
+// unconstrained-identifier path as a SQL-injection surface that today's
+// operator-owned YAML closes but tomorrow's dynamic-tenant flow widens.
+// Constraining at the Zod layer fails the manifest at boot rather than
+// trusting the call sites · defense-in-depth.
+//
+// Pattern: PostgreSQL unquoted identifier rules — starts with letter or
+// underscore · subsequent chars are letters / digits / underscore · max
+// 63 chars (Postgres NAMEDATALEN-1). Quoted identifiers (containing dots,
+// dashes, etc.) are NOT allowed in this contract — adapters must use
+// unquoted identifiers exclusively.
+const SqlIdentifierSchema = z
+  .string()
+  .min(1)
+  .max(63)
+  .regex(/^[a-z_][a-z0-9_]*$/, {
+    message:
+      'must be a valid lowercase Postgres identifier: ^[a-z_][a-z0-9_]*$ (max 63 chars · no dashes · no dots)',
+  });
+
 export const TenantUserTableSchema = z.object({
-  name: z.string(),
-  wallet_column: z.string(),
-  sol_address_column: z.string().optional(),
-  dynamic_user_id_column: z.string().optional(),
+  name: SqlIdentifierSchema,
+  wallet_column: SqlIdentifierSchema,
+  sol_address_column: SqlIdentifierSchema.optional(),
+  dynamic_user_id_column: SqlIdentifierSchema.optional(),
 }).strict();
 
 export const TenantConfigSchema = z.object({

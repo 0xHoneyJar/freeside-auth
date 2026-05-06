@@ -25,7 +25,7 @@
  * - operator-readable error: `tenant_mismatch: claimed=<x>, resolved=<y>`
  */
 
-import type { JWTClaim, JWTWallet, Tier } from '@freeside-auth/protocol';
+import { TierSchema, type JWTClaim, type JWTWallet, type Tier } from '@freeside-auth/protocol';
 import type {
   TenantAdapter,
   TenantUserIdentity,
@@ -122,8 +122,25 @@ export class MintJWTOrchestrator {
     }
 
     // 4. Fetch tenant-scoped claims (tier · custom fields)
+    //
+    // Cross-reviewer flatline + bridgebuilder (PR #1 · HIGH 2): the previous
+    // unchecked cast `(tenantClaims.tier as Tier)` was a privilege-escalation
+    // surface — any future adapter could DB-source an arbitrary tier value
+    // bypassing TierSchema validation. Combined with the SQL identifier
+    // surface (HIGH 1), this was the second half of the escalation chain.
+    //
+    // Defense: TierSchema.safeParse validates against the canonical enum
+    // (`public | verified | bearer | initiate | keeper`). On failure the
+    // adapter-supplied value is dropped · we fall through to caller's
+    // `request.tier` and finally `this.defaultTier`. Adapter intent
+    // recorded but never escalates.
     const tenantClaims = await adapter.fetchClaims(identity.user_id);
-    const tier = (tenantClaims.tier as Tier | undefined) ?? request.tier ?? this.defaultTier;
+    const adapterTier = (() => {
+      if (tenantClaims.tier === undefined) return undefined;
+      const parsed = TierSchema.safeParse(tenantClaims.tier);
+      return parsed.success ? parsed.data : undefined;
+    })();
+    const tier: Tier = adapterTier ?? request.tier ?? this.defaultTier;
 
     // 5. Construct JWTClaim
     const now = this.now();
