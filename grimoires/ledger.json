@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "next_sprint_number": 1,
+  "active_cycle": "freeside-auth-sprint-1",
+  "cycles": [
+    {
+      "id": "freeside-auth-sprint-1",
+      "label": "Sovereign identity spine — Sprawl Dashboard vertical slice",
+      "status": "active",
+      "created_at": "2026-04-30T00:00:00Z",
+      "prd": "grimoires/prd.md",
+      "sdd": "grimoires/sdd.md",
+      "persona": "KRANZ",
+      "methodology": "5-act KRANZ — Coordinate · Mirror · Verify · Flip · Distill",
+      "vertical_slice": "Sprawl Dashboard (SIWE-Turso → Better Auth + Freeside JWT)",
+      "sprints": [
+        {
+          "id": "sprint-0.5",
+          "global_number": 0,
+          "label": "Coordinate close + Better Auth POC",
+          "status": "planned",
+          "scope": "SMALL",
+          "estimated_days": 5,
+          "task_count_target": "5-7"
+        },
+        {
+          "id": "sprint-1",
+          "global_number": 1,
+          "label": "Mirror + Verify + Flip + Distill (vertical slice)",
+          "status": "planned",
+          "scope": "LARGE",
+          "estimated_days": 27,
+          "task_count_target": "25-30"
+        }
+      ]
+    }
+  ]
+}

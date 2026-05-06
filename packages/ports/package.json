@@ -2,8 +2,17 @@
   "name": "@freeside-auth/ports",
   "version": "0.1.0",
   "private": true,
-  "description": "TS interface ports — IIdentityService (resolve, register, link), IJwksProvider (verify, fetch JWKS), ICredentialBridge (translate external proof → canonical CredentialProof). Consumers depend on these; adapters satisfy them.",
+  "description": "TS interface ports — TenantAdapter (per-tenant identity resolution), IIdentityService (resolve, register, link), IJwksProvider (verify, fetch JWKS), ICredentialBridge (translate external proof → canonical CredentialProof). Consumers depend on these; adapters satisfy them.",
   "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tenant-adapter": "./src/tenant-adapter.port.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@freeside-auth/protocol": "workspace:*"
   }

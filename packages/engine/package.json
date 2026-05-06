@@ -2,10 +2,23 @@
   "name": "@freeside-auth/engine",
   "version": "0.1.0",
   "private": true,
-  "description": "Headless identity logic — 4-tier resolve algorithm, credential-link semantics, JWT helpers (verify side, not issuer), supersession-aware identity merge. Pure functions, no I/O. Adapters wrap; engine reasons.",
+  "description": "Headless identity logic — TenantRegistry (per-tenant adapter dispatch), 4-tier resolve algorithm, credential-link semantics, JWT mint orchestration (delegates signing to loa-freeside/apps/gateway · Rust). Adapters wrap; engine reasons.",
   "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tenant-registry": "./src/tenant-registry.ts",
+    "./tenant-config": "./src/tenant-config.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
   "dependencies": {
+    "@freeside-auth/ports": "workspace:*",
     "@freeside-auth/protocol": "workspace:*",
-    "@freeside-auth/ports": "workspace:*"
+    "yaml": "^2.8.4",
+    "zod": "^4.4.3"
   }
 }

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loa.dev/schemas/freeside-auth/user.schema.json",
+  "title": "User",
+  "description": "Canonical user entity per identity-spine doctrine. Single sub (user_id) bound to multiple wallets, multiple credentials, multiple tenant memberships. Profile DATA stays in midi (per CLAUDE.md schemas-here-data-in-midi rule); this is the SCHEMA only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sub", "wallets", "tenant_memberships", "created_at"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"],
+      "description": "Per-schema version. Enum-locked per VERSIONING.md."
+    },
+    "sub": {
+      "type": "string",
+      "description": "Canonical user_id (e.g., midi_profiles.id for mibera tenant). Tenant-scoped. JWT `sub` claim sources here."
+    },
+    "wallets": {
+      "type": "array",
+      "items": { "$ref": "wallet.schema.json" },
+      "description": "User's bound wallets across chains. References score-mibera's Wallet entity by chain+address. Empty for anon users."
+    },
+    "tenant_memberships": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]+$"
+      },
+      "description": "Tenant slugs the user belongs to. Multi-tenant users (e.g., bonded to mibera + cubquest) get multiple entries."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the user was first created in any tenant's midi DB."
+    }
+  }
+}

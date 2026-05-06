@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loa.dev/schemas/freeside-auth/resolve-result.schema.json",
+  "title": "ResolveResult",
+  "description": "Output of resolve_wallet (4-tier fallback). Drives bot UX: avatar, handle, verification badge, fallback messaging. Per [[chat-medium-presentation-boundary]]: substrate IDs (raw addresses, UUIDs) MUST NOT escape via this shape's display fields. Sources: mibera-dimensions/lib/server/resolve-wallet.ts:56-331.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["found", "resolved_via"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "found": {
+      "type": "boolean",
+      "description": "True if any tier produced a result. False = anon-fallback (per [[primary-wallet-doctrine]] graceful)."
+    },
+    "wallet": {
+      "$ref": "wallet.schema.json",
+      "description": "Resolved wallet. Present iff found=true."
+    },
+    "handle": {
+      "type": "string",
+      "description": "Display handle for chat-medium presentation. Falls back to wallet-shortened (0x79…34) when handle absent."
+    },
+    "discord_id": {
+      "type": "string",
+      "description": "Cached Discord snowflake (string · 64-bit precision)."
+    },
+    "discord_username": {
+      "type": "string",
+      "description": "Cached Discord display name."
+    },
+    "mibera_id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000,
+      "description": "Bound Mibera/Grail token ID. Optional."
+    },
+    "pfp_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Profile picture URL. Resolved via tier ladder (custom · grail-bound · derived · default)."
+    },
+    "fallback": {
+      "type": "boolean",
+      "description": "True when result came from a fallback tier (not primary lookup). Bot may surface 'fallback identity' badge."
+    },
+    "resolved_via": {
+      "type": "string",
+      "enum": ["primary", "fallback-discord", "fallback-handle", "fallback-wallet", "anon"],
+      "description": "Which tier produced the result. Tier ladder: primary (wallet-direct) > discord (Discord-binding) > handle (handle-search) > wallet-fallback (wallet-shortened) > anon (no result)."
+    }
+  }
+}

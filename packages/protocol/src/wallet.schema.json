@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loa.dev/schemas/freeside-auth/wallet.schema.json",
+  "title": "Wallet",
+  "description": "Chain-scoped wallet entity. Owned by score-mibera (per [[score-vs-identity-boundary]]); referenced here via address+chain pair. This module's User.wallets[] joins to score's Wallet entity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chain", "address", "verified_via", "linked_at"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"],
+      "description": "Per-schema version. Enum-locked per VERSIONING.md."
+    },
+    "chain": {
+      "type": "string",
+      "enum": ["ethereum", "berachain", "solana", "bitcoin"],
+      "description": "Chain identifier. Slice-B EVM (ethereum/berachain) + Solana for cubquest. Bitcoin reserved for V2."
+    },
+    "address": {
+      "type": "string",
+      "description": "Canonical lowercase for EVM (0x-prefixed 40-hex), base58 for Solana, bech32 for Bitcoin."
+    },
+    "verified_via": {
+      "type": "string",
+      "enum": ["siwe", "passkey", "dynamic", "seedvault", "legacy"],
+      "description": "Credential type that proved this wallet's binding to the user. `dynamic` = Dynamic SDK SIWE-equivalent; `legacy` = pre-Dynamic onboarding."
+    },
+    "linked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this wallet was linked to the user."
+    },
+    "primary": {
+      "type": "boolean",
+      "description": "True if this is the user's primary wallet (per [[primary-wallet-doctrine]])."
+    }
+  }
+}
